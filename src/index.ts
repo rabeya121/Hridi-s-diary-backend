@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
 import comboRoutes from "./routes/combo.routes";
 import reviewRoutes from "./routes/review.routes";
+import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
 
 
 
@@ -28,6 +29,12 @@ app.use("/api/reviews", reviewRoutes);
 app.get("/", (req: Request, res: Response) => {
   res.send("🎀 Hridi's Diary API is running");
 });
+
+// 404 handler (must be after all routes)
+app.use(notFoundHandler);
+
+// Global error handler (must be last)
+app.use(errorHandler);
 
 // Start server after DB connects
 const startServer = async (): Promise<void> => {
