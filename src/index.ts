@@ -5,6 +5,7 @@ import connectDB from "./config/db";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
 import comboRoutes from "./routes/combo.routes";
+import reviewRoutes from "./routes/review.routes";
 
 
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/combos", comboRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // Test route
 app.get("/", (req: Request, res: Response) => {
