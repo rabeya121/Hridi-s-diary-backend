@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "../models/User";
 import { generateToken } from "../utils/generateToken";
+import { AuthRequest } from "../middlewares/verifyJWT";
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -94,5 +95,23 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error during login" });
+  }
+};
+
+// @desc    Get logged-in user's own profile
+// @route   GET /api/auth/me
+export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const user = await User.findById(req.user?.id).select("-password");
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error fetching profile" });
   }
 };
