@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 import connectDB from "./config/db";
 import authRoutes from "./routes/auth.routes";
 import productRoutes from "./routes/product.routes";
+import comboRoutes from "./routes/combo.routes";
+
+
 
 dotenv.config();
 
@@ -17,6 +20,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/combos", comboRoutes);
 
 // Test route
 app.get("/", (req: Request, res: Response) => {
