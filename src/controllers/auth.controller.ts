@@ -3,6 +3,12 @@ import bcrypt from "bcryptjs";
 import User from "../models/User";
 import { generateToken } from "../utils/generateToken";
 import { AuthRequest } from "../middlewares/verifyJWT";
+import { OAuth2Client } from "google-auth-library";
+
+
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -113,5 +119,69 @@ export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error fetching profile" });
+  }
+};
+
+// @desc    Login or register via Google
+// @route   POST /api/auth/google
+export const googleAuth = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      res.status(400).json({ message: "Google credential is required" });
+      return;
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    if (!payload || !payload.email) {
+      res.status(401).json({ message: "Invalid Google token" });
+      return;
+    }
+
+    let user = await User.findOne({ email: payload.email });
+
+    if (!user) {
+      // Create a new user with a random unusable password
+      // (they will always log in via Google, never via password)
+      const randomPassword = await bcrypt.hash(
+        payload.email + Date.now().toString(),
+        10
+      );
+
+      user = await User.create({
+        name: payload.name || "Google User",
+        email: payload.email,
+        password: randomPassword,
+        role: "customer",
+        photoURL: payload.picture || "",
+      });
+    }
+
+    const token = generateToken({
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role,
+    });
+
+    res.status(200).json({
+      message: "Google login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error during Google authentication" });
   }
 };
