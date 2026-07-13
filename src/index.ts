@@ -7,6 +7,8 @@ import productRoutes from "./routes/product.routes";
 import comboRoutes from "./routes/combo.routes";
 import reviewRoutes from "./routes/review.routes";
 import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
+import orderRoutes from "./routes/order.routes";
+import paymentRoutes from "./routes/payment.routes";
 
 
 
@@ -24,6 +26,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/combos", comboRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/payments", paymentRoutes);
 
 // Test route
 app.get("/", (req: Request, res: Response) => {
