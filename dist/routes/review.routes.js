@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const review_controller_1 = require("../controllers/review.controller");
+const verifyJWT_1 = require("../middlewares/verifyJWT");
+const router = (0, express_1.Router)();
+router.get("/product/:productId", review_controller_1.getProductReviews);
+router.get("/combo/:comboId", review_controller_1.getComboReviews);
+router.post("/", verifyJWT_1.verifyJWT, review_controller_1.addReview);
+exports.default = router;

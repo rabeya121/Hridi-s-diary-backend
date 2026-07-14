@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const order_controller_1 = require("../controllers/order.controller");
+const verifyJWT_1 = require("../middlewares/verifyJWT");
+const verifyAdmin_1 = require("../middlewares/verifyAdmin");
+const router = (0, express_1.Router)();
+router.post("/", verifyJWT_1.verifyJWT, order_controller_1.createOrder);
+router.get("/my", verifyJWT_1.verifyJWT, order_controller_1.getMyOrders);
+router.get("/", verifyJWT_1.verifyJWT, verifyAdmin_1.verifyAdmin, order_controller_1.getAllOrders);
+router.patch("/:id/status", verifyJWT_1.verifyJWT, verifyAdmin_1.verifyAdmin, order_controller_1.updateOrderStatus);
+exports.default = router;

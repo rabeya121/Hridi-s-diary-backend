@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const combo_controller_1 = require("../controllers/combo.controller");
+const verifyJWT_1 = require("../middlewares/verifyJWT");
+const verifyAdmin_1 = require("../middlewares/verifyAdmin");
+const router = (0, express_1.Router)();
+router.get("/", combo_controller_1.getCombos);
+router.get("/:id", combo_controller_1.getComboById);
+router.post("/", verifyJWT_1.verifyJWT, verifyAdmin_1.verifyAdmin, combo_controller_1.createCombo);
+router.delete("/:id", verifyJWT_1.verifyJWT, verifyAdmin_1.verifyAdmin, combo_controller_1.deleteCombo);
+exports.default = router;
