@@ -39,12 +39,13 @@ export const createCheckoutSession = async (
       mode: "payment",
       line_items: items.map((item) => ({
         price_data: {
-          currency: "bdt",
+          currency: "usd",
           product_data: {
             name: item.title,
             images: [item.image],
+            description: `Original price: ৳${item.price} BDT`,
           },
-          unit_amount: Math.round(item.price * 100), // Stripe uses smallest currency unit
+          unit_amount: Math.round((item.price / 110) * 100), // Approx BDT to USD conversion for demo
         },
         quantity: item.quantity,
       })),

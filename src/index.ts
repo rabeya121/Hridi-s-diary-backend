@@ -10,8 +10,6 @@ import { errorHandler, notFoundHandler } from "./middlewares/errorHandler";
 import orderRoutes from "./routes/order.routes";
 import paymentRoutes from "./routes/payment.routes";
 
-
-
 dotenv.config();
 
 const app: Application = express();
@@ -20,6 +18,16 @@ const PORT = process.env.PORT || 8000;
 // Middlewares
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(express.json());
+
+// Ensure DB is connected before handling any request (serverless-safe)
+app.use(async (req: Request, res: Response, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -40,12 +48,13 @@ app.use(notFoundHandler);
 // Global error handler (must be last)
 app.use(errorHandler);
 
-// Start server after DB connects
-const startServer = async (): Promise<void> => {
-  await connectDB();
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+// Local dev only — Vercel is serverless, it never calls this
+if (process.env.NODE_ENV !== "production") {
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
   });
-};
+}
 
-startServer();
+export default app; // <-- Vercel needs this default export

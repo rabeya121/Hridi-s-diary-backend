@@ -6,7 +6,7 @@ import { AuthRequest } from "../middlewares/verifyJWT";
 // @route   POST /api/orders
 export const createOrder = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { items, totalPrice, address, phone } = req.body;
+    const { items, totalPrice, address, phone, paymentMethod } = req.body;
 
     if (!items || items.length === 0 || !totalPrice || !address || !phone) {
       res.status(400).json({ message: "Missing required order fields" });
@@ -19,6 +19,7 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
       totalPrice,
       address,
       phone,
+      paymentMethod: paymentMethod || "Cash on Delivery",
     });
 
     res.status(201).json({ message: "Order placed successfully", order });
