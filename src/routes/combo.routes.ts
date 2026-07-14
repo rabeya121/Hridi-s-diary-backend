@@ -8,8 +8,8 @@ import {
 import { verifyJWT } from "../middlewares/verifyJWT";
 import { verifyAdmin } from "../middlewares/verifyAdmin";
 
-const router = Router();
 
+const router = Router();
 router.get("/", getCombos);
 router.get("/:id", getComboById);
 router.post("/", verifyJWT, verifyAdmin, createCombo);

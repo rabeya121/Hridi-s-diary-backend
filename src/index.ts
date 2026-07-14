@@ -39,7 +39,7 @@ app.use("/api/payments", paymentRoutes);
 
 // Test route
 app.get("/", (req: Request, res: Response) => {
-  res.send("🎀 Hridi's Diary API is running");
+  res.send("🎀 Hridi's Diary API is running!!!");
 });
 
 // 404 handler (must be after all routes)
