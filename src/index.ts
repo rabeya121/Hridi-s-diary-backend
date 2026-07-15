@@ -15,8 +15,23 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 8000;
 
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://hridis-diary-frontend.vercel.app",
+];
 // Middlewares
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
+
 app.use(express.json());
 
 // Ensure DB is connected before handling any request (serverless-safe)
